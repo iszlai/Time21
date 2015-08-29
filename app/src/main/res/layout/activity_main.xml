@@ -1,0 +1,87 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="3"
+    android:rowCount="6"
+    android:background="#9C27B0">
+<!--
+<EditText
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:id="@+id/edit_message"
+    android:hint="@string/edit_message"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_send" />
+    -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLargeInverse"
+        android:text="Large Text"
+        android:id="@+id/dayLabel"
+        android:layout_columnSpan="2"
+        android:layout_rowSpan="2"
+        android:gravity="center"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/hourLabel"
+       android:layout_columnSpan="2"
+        android:layout_rowSpan="3"
+        android:gravity="center"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/minuteLabel"
+        android:layout_columnSpan="2"
+        android:layout_rowSpan="4"
+        android:gravity="center"
+        android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/secondLabel"
+        android:layout_columnSpan="2"
+        android:layout_rowSpan="5"
+        android:gravity="center"
+        android:textColor="#FFFFFF"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/startButton"
+        android:layout_columnSpan="2"
+        android:layout_rowSpan="6"
+        android:gravity="center"
+        android:text="Start"
+        android:onClick="startCounter"
+
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/stopButton"
+        android:layout_columnSpan="2"
+        android:layout_rowSpan="6"
+        android:gravity="center"
+        android:text="Restart"
+        android:onClick="resetCounter"
+        android:visibility="invisible"
+        />
+
+</GridLayout>
