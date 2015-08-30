@@ -1,5 +1,6 @@
 package wontcomplain.com.time21;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG ="TWENTY1" ;
+    private static final String TARGET_DATE ="targetDate" ;
     private static final String PREFS_NAME = "TWENTY1";
     DateTime targetDate;
     SharedPreferences settings;
@@ -31,10 +34,21 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i(TAG, "Application has started " );
+        Log.i(TAG, "Application has started ");
         settings = getSharedPreferences(PREFS_NAME, 0);
-        targetDate=new DateTime(settings.getString("targetDate", new DateTime().plusDays(21).toString()));
-
+        boolean isFirstTimeLaunch=!settings.contains(TARGET_DATE);
+        if(isFirstTimeLaunch){
+            targetDate = new DateTime(settings.getString(TARGET_DATE, new DateTime().plusDays(21).toString()));
+            DateTime today = new DateTime();
+            final Period interval = new Period(today, targetDate);
+            updateTime(interval,getTimerTextViews(),this);
+        }else {
+            targetDate = new DateTime(settings.getString(TARGET_DATE, new DateTime().plusDays(21).toString()));
+            DateTime today = new DateTime();
+            final Period interval = new Period(today, targetDate);
+            updateTime(interval,getTimerTextViews(),this);
+            startCounter(findViewById(R.id.startButton));
+        }
     }
 
     @Override
@@ -65,25 +79,26 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "today " + today.toString());
         Log.i(TAG, "target " + targetDate.toString());
         Period interval = new Period(today,targetDate);
-
+        final Activity ctx=this;
         Timer timer=new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+
                 DateTime today = new DateTime();
                 final Period interval = new Period(today, targetDate);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        updateTime(interval, getTimerTextViews());
+                        updateTime(interval, getTimerTextViews(),ctx);
                     }
                 });
 
             }
         }, 0, 1000);
-        Button button = (Button) view;
+        ImageButton button = (ImageButton) view;
         button.setVisibility(View.INVISIBLE);
-        Button stop =(Button)findViewById(R.id.stopButton);
+        ImageButton stop =(ImageButton)findViewById(R.id.stopButton);
         stop.setVisibility(View.VISIBLE);
         // updateTime(interval,getTimerTextViews());
     }
@@ -96,20 +111,36 @@ public class MainActivity extends AppCompatActivity {
         return new TimeTextViews(day,hour,minute,second);
     }
 
-    public static void updateTime(Period interval,TimeTextViews views){
-        String days=Integer.valueOf(interval.getWeeks() * 7 + interval.getDays()).toString();
-        Log.i(TAG, "d: " + days);
+    public static void updateTime(Period interval,TimeTextViews views,Activity ctx){
+        String days= getDays(interval, ctx);
         views.getDay().setText(days);
-
-        String hours=Integer.valueOf(interval.getHours()).toString();
-        Log.i(TAG, "h: " + hours);
+        String hours= getHours(interval, ctx);
         views.getHour().setText(hours);
-        String minutes=Integer.valueOf(interval.getMinutes()).toString();
-        Log.i(TAG, "m: " + minutes);
+        String minutes= getMinutes(interval, ctx);
         views.getMinute().setText(minutes);
-        String seconds=Integer.valueOf(interval.getSeconds()).toString();
-        Log.i(TAG, "s: " + seconds);
+        String seconds= getSeconds(interval, ctx);
         views.getSecond().setText(seconds);
+        Log.i(TAG, "updateTime "+days+hours+minutes+seconds);
+    }
+
+    private static String getDays(Period interval, Activity ctx) {
+        return extract((interval.getWeeks() * 7 + interval.getDays()),ctx,R.string.days);
+    }
+
+    private static String getSeconds(Period interval, Activity ctx) {
+        return extract(interval.getSeconds(),ctx,R.string.seconds);
+    }
+
+    private static String getMinutes(Period interval, Activity ctx) {
+        return extract(interval.getMinutes(),ctx,R.string.minutes);
+    }
+
+    private static String getHours(Period interval, Activity ctx) {
+        return extract(interval.getHours(),ctx,R.string.hours);
+    }
+
+    private static String extract(int value, Activity ctx,int stringId) {
+        return Integer.valueOf(value).toString()+" "+ctx.getString(stringId);
     }
 
     @Override
@@ -117,14 +148,17 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.i(TAG, "onStop called");
         SharedPreferences.Editor edit = settings.edit();
-        edit.putString("targetDate",targetDate.toString());
+        edit.putString(TARGET_DATE, targetDate.toString());
         edit.commit();
+
+
+
     }
 
     public void resetCounter(View view) {
         targetDate=new DateTime().plusDays(21);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putString("targetDate",targetDate.toString());
+        edit.putString(TARGET_DATE,targetDate.toString());
         edit.commit();
 
 
